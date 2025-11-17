@@ -1,1 +1,8 @@
+services:
+  - type: worker
+    name: khamsat-scraper
+    env: python
+    buildCommand: ""
+    startCommand: "./start.sh"
+    region: frankfurt
 
