@@ -34,11 +34,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Run details scraper
+   - name: Run details scraper
       id: scraping
-      run: |
-        python rac4.py
-        echo "scraping_done=true" >> $GITHUB_OUTPUT
+      timeout-minutes: 340  # 5h40 - Arrêt avant le timeout du job
+      run: python rac4.py
       continue-on-error: true
     
     - name: Commit and push results
