@@ -41,13 +41,13 @@ jobs:
       continue-on-error: true
     
     - name: Commit and push results
+      if: always()  # AJOUTEZ CETTE LIGNE
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add categories/
         git diff --quiet && git diff --staged --quiet || git commit -m "Update details data - $(date +'%Y-%m-%d %H:%M:%S')"
         git push
-    
     - name: Check if scraping is complete
       id: check_complete
       run: |
