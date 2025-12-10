@@ -1,11 +1,7 @@
 RAPPORT - Resultats_أسلوب_حياة
 ============================================================
-Total traités : 612
-Succès        : 612
+Total traités : 0
+Succès        : 0
 Erreurs       : 0
 
 DÉTAILS PAR CATÉGORIE :
-- Inconnu > Inconnu : 2
-- أسلوب حياة > تنمية شخصية : 378
-- أسلوب حياة > صحة وجمال : 124
-- أسلوب حياة > مهارات حياتية وترفيه : 108
