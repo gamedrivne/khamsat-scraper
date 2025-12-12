@@ -1,8 +1,7 @@
 RAPPORT - Resultats_كتابة_وترجمة
 ============================================================
-Total traités : 232
-Succès        : 232
+Total traités : 0
+Succès        : 0
 Erreurs       : 0
 
 DÉTAILS PAR CATÉGORIE :
-- كتابة وترجمة > تفريغ نصوص : 232
