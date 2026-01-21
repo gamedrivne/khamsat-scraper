@@ -1,9 +1,9 @@
-name: Khamsat Details Scraper (Auto-Resume)
+name: Khamsat Details Scraper (Monthly Auto)
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Tous les jours à 6h UTC
-  workflow_dispatch:
+    - cron: '7 0 1 * *'  # Le 1er de chaque mois à 00h07 UTC
+  workflow_dispatch:  # Permet lancement manuel
   repository_dispatch:
     types: [continue-details-scraping]
 
@@ -41,13 +41,14 @@ jobs:
       continue-on-error: true
     
     - name: Commit and push results
-      if: always()  # AJOUTEZ CETTE LIGNE
+      if: always()
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add categories/
-        git diff --quiet && git diff --staged --quiet || git commit -m "Update details data - $(date +'%Y-%m-%d %H:%M:%S')"
+        git diff --quiet && git diff --staged --quiet || git commit -m "🔄 Update details data - $(date +'%Y-%m-%d %H:%M:%S')"
         git push
+    
     - name: Check if scraping is complete
       id: check_complete
       run: |
@@ -80,10 +81,10 @@ jobs:
                     processed = len(json.load(f))
                     processed_services += processed
         
-        print(f"Progression: {processed_services}/{total_services}")
+        print(f"📊 Progression: {processed_services}/{total_services}")
         
         if processed_services >= total_services:
-            print("✅ Scraping terminé!")
+            print("✅ Scraping terminé - Pas de relance!")
             with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                 f.write("complete=true\n")
         else:
@@ -101,3 +102,15 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/dispatches \
           -d '{"event_type":"continue-details-scraping"}'
+    
+    - name: Final status report
+      if: always()
+      run: |
+        if [ "${{ steps.check_complete.outputs.complete }}" == "true" ]; then
+          echo "✅ =========================================="
+          echo "✅ SCRAPING TERMINÉ AVEC SUCCÈS"
+          echo "✅ Prochain lancement: 1er du mois suivant"
+          echo "✅ =========================================="
+        else
+          echo "🔄 Scraping en cours, relance automatique..."
+        fi
