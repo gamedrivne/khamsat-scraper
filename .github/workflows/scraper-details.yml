@@ -1,116 +1,90 @@
-name: Khamsat Details Scraper (Monthly Auto)
+name: Khamsat Details Scraper (Manual Debug)
 
 on:
-  schedule:
-    - cron: '7 0 1 * *'  # Le 1er de chaque mois à 00h07 UTC
-  workflow_dispatch:  # Permet lancement manuel
+  workflow_dispatch:
   repository_dispatch:
     types: [continue-details-scraping]
 
 jobs:
   scrape-details:
     runs-on: ubuntu-latest
-    timeout-minutes: 350  # 5h50
-    
+    timeout-minutes: 350
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
-    - name: Install Chrome and ChromeDriver
+
+    - name: Install Chrome
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget unzip
+        sudo apt-get install -y wget
         wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
         rm google-chrome-stable_current_amd64.deb
-        
-    - name: Install Python dependencies
+
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
-    - name: Run details scraper
+
+    - name: Run rac4.py
       id: scraping
-      timeout-minutes: 340  # 5h40 - Arrêt avant le timeout du job
+      timeout-minutes: 340
       run: python rac4.py
       continue-on-error: true
-    
+
     - name: Commit and push results
       if: always()
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add categories/
-        git diff --quiet && git diff --staged --quiet || git commit -m "🔄 Update details data - $(date +'%Y-%m-%d %H:%M:%S')"
+        git diff --quiet && git diff --staged --quiet || git commit -m "🛠️ [DEBUG] Details - $(date +'%Y-%m-%d %H:%M:%S')"
         git push
-    
+
     - name: Check if scraping is complete
       id: check_complete
+      if: always()
       run: |
         python << 'EOF'
-        import os
-        import json
-        import glob
-        
+        import os, json, glob
+
         progress_dir = "categories/progress_details"
         resultats_dir = "categories/resultats"
-        
-        # Compte les fichiers CSV dans resultats
+
         csv_files = glob.glob(os.path.join(resultats_dir, "Resultats_*.csv"))
-        
         total_services = 0
         processed_services = 0
-        
+
         for csv_file in csv_files:
             filename = os.path.splitext(os.path.basename(csv_file))[0]
             progress_file = os.path.join(progress_dir, f"progress_{filename}.json")
-            
-            # Compte les lignes du CSV (services)
             with open(csv_file, 'r', encoding='utf-8-sig') as f:
-                lines = len(f.readlines()) - 1
-                total_services += lines
-            
-            # Compte les URLs traitées
+                total_services += len(f.readlines()) - 1
             if os.path.exists(progress_file):
                 with open(progress_file, 'r') as f:
-                    processed = len(json.load(f))
-                    processed_services += processed
-        
+                    processed_services += len(json.load(f))
+
         print(f"📊 Progression: {processed_services}/{total_services}")
-        
-        if processed_services >= total_services:
-            print("✅ Scraping terminé - Pas de relance!")
-            with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+            if processed_services >= total_services:
+                print("✅ Scraping terminé !")
                 f.write("complete=true\n")
-        else:
-            print("🔄 Scraping incomplet, relance nécessaire")
-            with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+            else:
+                print("🔄 Incomplet, relance nécessaire")
                 f.write("complete=false\n")
         EOF
-    
+
     - name: Trigger next run if incomplete
       if: steps.check_complete.outputs.complete == 'false'
       run: |
-        echo "🔄 Déclenchement du prochain run..."
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/dispatches \
           -d '{"event_type":"continue-details-scraping"}'
-    
-    - name: Final status report
-      if: always()
-      run: |
-        if [ "${{ steps.check_complete.outputs.complete }}" == "true" ]; then
-          echo "✅ =========================================="
-          echo "✅ SCRAPING TERMINÉ AVEC SUCCÈS"
-          echo "✅ Prochain lancement: 1er du mois suivant"
-          echo "✅ =========================================="
-        else
-          echo "🔄 Scraping en cours, relance automatique..."
-        fi
