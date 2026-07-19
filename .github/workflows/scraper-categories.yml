@@ -1,0 +1,36 @@
+name: Khamsat Categories Scraper
+
+on:
+  schedule:
+    # Exécution automatique chaque jour à 01h00 UTC (avant rac2 qui tourne à 02h00)
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # Permet de lancer manuellement
+
+jobs:
+  scrape-categories:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run categories scraper
+      run: python rac1.py
+
+    - name: Commit and push results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add categories/
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update categories - $(date +'%Y-%m-%d %H:%M:%S')"
+        git push
