@@ -36,7 +36,10 @@ jobs:
         git config --local user.name "GitHub Action"
         git add categories/
         git diff --quiet && git diff --staged --quiet || (
+          git stash
           git pull --rebase origin main
+          git stash pop
+          git add categories/
           git commit -m "✅ [1/4] Categories - $(date +'%Y-%m-%d %H:%M:%S')"
           git push
         )
@@ -70,7 +73,10 @@ jobs:
         git config --local user.name "GitHub Action"
         git add categories/
         git diff --quiet && git diff --staged --quiet || (
+          git stash
           git pull --rebase origin main
+          git stash pop
+          git add categories/
           git commit -m "✅ [2/4] Sous-categories - $(date +'%Y-%m-%d %H:%M:%S')"
           git push
         )
@@ -112,26 +118,24 @@ jobs:
         git config --local user.name "GitHub Action"
         git add categories/
         git diff --quiet && git diff --staged --quiet || (
+          git stash
           git pull --rebase origin main
+          git stash pop
+          git add categories/
           git commit -m "✅ [3/4] Services - $(date +'%Y-%m-%d %H:%M:%S')"
           git push
         )
 
   # ==========================================
-  # JOB 4 — PAUSE 2H + RAC4 : Détails
+  # JOB 4 — RAC4 : Détails
   # ==========================================
   job4-details:
     runs-on: ubuntu-latest
     needs: job3-services
-    timeout-minutes: 470
+    timeout-minutes: 350
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: ⏳ Pause 2 heures
-      run: |
-        echo "Pause de 2h avant rac4..."
-        sleep 7200
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -164,7 +168,10 @@ jobs:
         git config --local user.name "GitHub Action"
         git add categories/
         git diff --quiet && git diff --staged --quiet || (
+          git stash
           git pull --rebase origin main
+          git stash pop
+          git add categories/
           git commit -m "✅ [4/4] Details - $(date +'%Y-%m-%d %H:%M:%S')"
           git push
         )
