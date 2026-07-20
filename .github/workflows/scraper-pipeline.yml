@@ -2,7 +2,6 @@ name: Khamsat Full Pipeline (Weekly)
 
 on:
   schedule:
-    # Chaque Dimanche à 22h00 UTC
     - cron: '0 22 * * 0'
   workflow_dispatch:
 
@@ -136,6 +135,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: 🗑️ Reset progression (nouveau cycle hebdomadaire)
+      run: |
+        echo "🗑️ Nettoyage progression_details..."
+        rm -rf categories/progress_details/
+        mkdir -p categories/progress_details/
+        echo "✅ Progression remise à zéro pour nouveau cycle"
 
     - name: Set up Python
       uses: actions/setup-python@v5
