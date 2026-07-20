@@ -54,6 +54,17 @@ log_print("🚀 DÉMARRAGE EXTRACTION DÉTAILS SERVICES KHAMSAT")
 log_print("=" * 60)
 
 # ============================
+# 🗑️ RESET DES FICHIERS DU CYCLE PRÉCÉDENT
+# ============================
+log_print("🗑️ Nettoyage des anciens fichiers Details_ et Stats_...")
+old_files = glob.glob(os.path.join(details_dir, "Details_*.csv")) + \
+            glob.glob(os.path.join(details_dir, "Stats_*.txt"))
+for old_f in old_files:
+    os.remove(old_f)
+    log_print(f"   -> Supprimé : {os.path.basename(old_f)}")
+log_print("✅ Dossier details_services nettoyé pour nouveau cycle")
+
+# ============================
 # 2️⃣ RÉCUPÉRATION DES FICHIERS RÉSULTATS
 # ============================
 
@@ -91,7 +102,6 @@ def init_driver():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-    
     driver = webdriver.Chrome(options=chrome_options)
     return driver
 
@@ -110,17 +120,17 @@ def extract_service_details(driver, wait, link):
     try:
         driver.get(link)
         time.sleep(2)
-        
+
         # Extraction des données
-        title = get_text(driver, wait, '//h1')
-        owner = get_text(driver, wait, '//div[@id="service_owner"]//a[contains(@class, "sidebar_user")]')
+        title  = get_text(driver, wait, '//h1')
+        owner  = get_text(driver, wait, '//div[@id="service_owner"]//a[contains(@class, "sidebar_user")]')
         buyers = get_text(driver, wait, '//div[contains(@class, "col-6")][span[contains(text(), "المشترين")]]/following-sibling::div[1]/span')
-        
+
         votes = get_text(driver, wait, '//div[contains(@class, "col-6")][span[contains(text(), "التقييمات")]]/following-sibling::div[1]//li[contains(@class, "info")]')
         votes = votes.replace("(", "").replace(")", "")
-        
+
         last_date = get_text(driver, wait, '//*[@id="reviews-section"]//div[contains(@class, "review_section")][1]//div[contains(@class, "meta--date")]/span[2]', "Aucun avis")
-        
+
         # Extraction des mots-clés
         try:
             tags_elements = driver.find_elements(By.XPATH, '//ul[contains(@class, "c-list--tags")]//li//a')
@@ -128,37 +138,25 @@ def extract_service_details(driver, wait, link):
             keywords = ", ".join(tags_list) if tags_list else "Aucun tag"
         except:
             keywords = "Erreur Tags"
-        
-        # Catégories
+
+        # Catégories breadcrumb
         cat_main = get_text(driver, wait, '//ol[contains(@class, "breadcrumb")]//li[2]//a', "Inconnu")
-        cat_sub = get_text(driver, wait, '//ol[contains(@class, "breadcrumb")]//li[3]//a', "Inconnu")
-        
+        cat_sub  = get_text(driver, wait, '//ol[contains(@class, "breadcrumb")]//li[3]//a', "Inconnu")
+
         return {
-            "title": title,
-            "owner": owner,
-            "buyers": buyers,
-            "votes": votes,
-            "last_date": last_date,
-            "cat_main": cat_main,
-            "cat_sub": cat_sub,
-            "keywords": keywords,
-            "link": link,
-            "status": "success"
+            "title": title, "owner": owner, "buyers": buyers,
+            "votes": votes, "last_date": last_date,
+            "cat_main": cat_main, "cat_sub": cat_sub,
+            "keywords": keywords, "link": link, "status": "success"
         }
-        
+
     except Exception as e:
         log_print(f"   ❌ Erreur extraction {link}: {e}", "error")
         return {
-            "title": "Erreur",
-            "owner": "Erreur",
-            "buyers": "0",
-            "votes": "0",
-            "last_date": "0",
-            "cat_main": "Erreur",
-            "cat_sub": "Erreur",
-            "keywords": "Erreur",
-            "link": link,
-            "status": "error"
+            "title": "Erreur", "owner": "Erreur", "buyers": "0",
+            "votes": "0", "last_date": "0", "cat_main": "Erreur",
+            "cat_sub": "Erreur", "keywords": "Erreur",
+            "link": link, "status": "error"
         }
 
 # ============================
@@ -166,28 +164,28 @@ def extract_service_details(driver, wait, link):
 # ============================
 def process_result_file(result_file, driver, wait):
     """Traite un fichier de résultats."""
-    
-    base_name = os.path.splitext(os.path.basename(result_file))[0]
+
+    base_name  = os.path.splitext(os.path.basename(result_file))[0]
     output_csv = os.path.join(details_dir, f"Details_{base_name}.csv")
     stats_file = os.path.join(details_dir, f"Stats_{base_name}.txt")
-    
+
     log_print(f"\n{'='*60}")
     log_print(f"📁 Traitement : {base_name}")
     log_print(f"{'='*60}")
-    
-    # Chargement progression
+
+    # Chargement progression (reprise en cas de coupure dans le même cycle)
     processed_links = load_progress(base_name)
     if processed_links:
         log_print(f"🔄 Reprise : {len(processed_links)} services déjà traités")
-    
-    # Initialisation CSV sortie
-    file_exists = os.path.exists(output_csv)
-    if not file_exists:
+
+    # Initialisation CSV sortie (créé seulement s'il n'existe pas)
+    if not os.path.exists(output_csv):
         with open(output_csv, "w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
-            writer.writerow(["Titre", "Vendeur", "Acheteurs", "Notes", "Date Dernier Avis", 
-                           "Catégorie", "Sous-Catégorie", "Mots Clés", "Lien"])
-    
+            writer.writerow(["Titre", "Vendeur", "Acheteurs", "Notes",
+                             "Date Dernier Avis", "Catégorie",
+                             "Sous-Catégorie", "Mots Clés", "Lien"])
+
     # Lecture du fichier source
     services = []
     try:
@@ -200,53 +198,46 @@ def process_result_file(result_file, driver, wait):
     except Exception as e:
         log_print(f"❌ Erreur lecture {result_file}: {e}", "error")
         return 0
-    
+
     total_services = len(services)
     log_print(f"🎯 {total_services} services à traiter")
-    
+
     # Statistiques
     stats_categories = defaultdict(int)
     total_success = 0
-    total_errors = 0
-    
+    total_errors  = 0
+
     # Traitement de chaque service
     for i, link in enumerate(services, 1):
         log_print(f"⏳ [{i}/{total_services}] {link}")
-        
+
         result = extract_service_details(driver, wait, link)
-        
+
         # Écriture dans CSV
         with open(output_csv, "a", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
             writer.writerow([
-                result["title"],
-                result["owner"],
-                result["buyers"],
-                result["votes"],
-                result["last_date"],
-                result["cat_main"],
-                result["cat_sub"],
-                result["keywords"],
-                result["link"]
+                result["title"], result["owner"], result["buyers"],
+                result["votes"], result["last_date"], result["cat_main"],
+                result["cat_sub"], result["keywords"], result["link"]
             ])
-        
+
         # Mise à jour stats
         if result["status"] == "success":
             total_success += 1
-            full_cat = f"{result['cat_main']} > {result['cat_sub']}"
-            stats_categories[full_cat] += 1
+            stats_categories[f"{result['cat_main']} > {result['cat_sub']}"] += 1
             log_print(f"   ✅ OK | Tags: {result['keywords'][:50]}...", "success")
         else:
             total_errors += 1
             stats_categories["Erreurs > Liens cassés"] += 1
-        
-        # Marquer comme traité
+
+        # Marquer comme traité + sauvegarder progression
         processed_links.add(link)
         save_progress(base_name, processed_links)
-        
+
         # Pause anti-ban
         time.sleep(2)
-    
+
     # Sauvegarde des statistiques
     with open(stats_file, "w", encoding="utf-8") as f:
         f.write(f"RAPPORT - {base_name}\n")
@@ -257,22 +248,21 @@ def process_result_file(result_file, driver, wait):
         f.write("DÉTAILS PAR CATÉGORIE :\n")
         for cat, count in sorted(stats_categories.items()):
             f.write(f"- {cat} : {count}\n")
-    
+
     log_print(f"\n📊 {base_name} : {total_success} succès, {total_errors} erreurs")
-    
     return total_success
 
 # ============================
 # 7️⃣ BOUCLE PRINCIPALE
 # ============================
 
-driver = None
+driver     = None
 grand_total = 0
 
 try:
     driver = init_driver()
-    wait = WebDriverWait(driver, 15)
-    
+    wait   = WebDriverWait(driver, 15)
+
     for result_file in result_files:
         try:
             total = process_result_file(result_file, driver, wait)
@@ -290,11 +280,10 @@ except Exception as e:
 finally:
     if driver:
         driver.quit()
-    
-    # RAPPORT FINAL
+
     log_print("\n" + "=" * 60)
     log_print("       📊 RAPPORT FINAL")
     log_print("=" * 60)
     log_print(f"📁 Dossier détails : {details_dir}")
-    log_print(f"🎯 TOTAL GÉNÉRAL : {grand_total} services détaillés")
+    log_print(f"🎯 TOTAL GÉNÉRAL   : {grand_total} services détaillés")
     log_print("=" * 60)
