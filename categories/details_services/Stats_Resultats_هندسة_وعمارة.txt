@@ -1,7 +1,0 @@
-RAPPORT - Resultats_هندسة_وعمارة
-============================================================
-Total traités : 0
-Succès        : 0
-Erreurs       : 0
-
-DÉTAILS PAR CATÉGORIE :

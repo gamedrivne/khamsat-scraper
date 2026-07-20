@@ -1,7 +1,0 @@
-RAPPORT - Resultats_تصميم
-============================================================
-Total traités : 0
-Succès        : 0
-Erreurs       : 0
-
-DÉTAILS PAR CATÉGORIE :
