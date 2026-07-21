@@ -1,0 +1,62 @@
+
+
+Analyse terminée ! Voici le résumé détaillé du fonctionnement de votre système.
+
+#### Vue d'ensemble
+
+Votre projet est un **scraper automatisé du site Khamsat.com** (marketplace arabe de microservices) orchestré par GitHub Actions. Il fonctionne en **pipeline de 4 étapes séquentielles** (rac1 → rac2 → rac3 → rac4), du plus général au plus détaillé, avec sauvegarde automatique des résultats par commit Git. Le cycle complet s'exécute **chaque dimanche à 22h00 UTC** (cron `0 22 * * 0`).
+
+#### Le pipeline principal : `scraper-pipeline.yml`
+
+C'est le chef d'orchestre. Chaque job dépend du précédent (`needs:`) :
+
+**Job 1 : rac1.py - Catégories principales**
+- Requête HTTP simple (`requests` + `BeautifulSoup`) sur la page d'accueil `khamsat.com`
+- Cible le conteneur `div.row.grid-items` et extrait tous les liens de catégories
+- Sortie : `categories/categories_khamsat.csv` (Nom + Lien)
+- Commit : `✅ [1/4] Categories`
+
+**Job 2 : rac2.py - Sous-catégories**
+- Lit le CSV du job 1, visite chaque page de catégorie
+- Filtre les liens : garde ceux qui commencent par l'URL de la catégorie, exclut `/service/`, `/user/` et les URLs avec `?`
+- Pause de **2 secondes** entre chaque catégorie (anti-ban)
+- Sortie : un CSV par catégorie dans `categories/sous_categories/` (ex : `تصميم.csv`)
+- Commit : `✅ [2/4] Sous-categories`
+
+**Job 3 : rac3.py - Liste des services (Selenium)**
+- Ici, passage à **Selenium + Chrome headless** car les pages utilisent du chargement dynamique
+- Pour chaque sous-catégorie : clique sur le bouton **"Voir plus"** (`#load_more_content`) jusqu'à 50 fois pour charger tous les services
+- Extrait : catégorie, titre, lien du service, URL de l'image
+- **Système de reprise** : chaque URL traitée est sauvée dans `categories/progress/progress_*.json`, donc en cas de crash, le script reprend où il s'était arrêté
+- Sortie : `categories/resultats/Resultats_*.csv`
+- Pause 3s entre sous-catégories, commit : `✅ [3/4] Services`
+
+**Job 4 : rac4.py - Détails de chaque service (le plus long)**
+- **Reset au démarrage** : le workflow supprime `progress_details/` pour repartir de zéro chaque semaine, et le script supprime les anciens `Details_*.csv` et `Stats_*.txt`
+- Visite **chaque page de service individuellement** et extrait via XPath : titre, vendeur, nombre d'acheteurs, notes, date du dernier avis, catégorie/sous-catégorie (breadcrumb), mots-clés (tags)
+- Sortie : `categories/details_services/Details_*.csv` + un rapport `Stats_*.txt` par catégorie (succès/erreurs/répartition)
+- Pause 2s entre services, commit : `✅ [4/4] Details`
+
+#### Le mécanisme d'auto-relance (le point clé)
+
+Comme il y a des **milliers de services** et que GitHub limite les jobs à 6h, le job 4 est conçu pour tourner en boucle :
+
+1. `timeout-minutes: 340` (~5h40) avec `continue-on-error: true` : le job s'arrête proprement avant la limite
+2. Le commit se fait **même en cas de timeout** (`if: always()`), donc rien n'est perdu
+3. Une étape Python compare le total de services (lignes des `Resultats_*.csv`) au nombre traité (`progress_details/*.json`)
+4. Si **incomplet** : appel API `repository_dispatch` avec l'événement `continue-details-scraping`, qui déclenche `scraper-details.yml`, lequel reprend le scraping grâce aux fichiers de progression... et se relance lui-même si nécessaire, jusqu'à 100 % de complétion
+
+#### Les workflows de debug et maintenance
+
+- **`scraper-categories.yml`, `scraper.yml`, `scraper-services.yml`, `scraper-details.yml`** : versions manuelles (`workflow_dispatch`) de chaque étape individuelle, pour tester/relancer une seule phase sans tout le pipeline
+- **`cleanup-runs.yml`** : supprime tous les anciens runs de workflows via l'API GitHub (lancement manuel), pour garder l'historique propre
+- **`cleanup.py`** : même chose mais en local depuis votre PC
+
+#### Points d'attention
+
+1. ⚠️ **`cleanup.py` contient un token en dur** : ne jamais commiter un vrai token GitHub dans le code, utilisez toujours un secret ou une variable d'environnement (le `.env.example` est là pour ça)
+2. La gestion des commits avec `git stash / pull --rebase / stash pop` évite les conflits entre jobs qui poussent en parallèle : bien pensé
+3. Fragilité classique du scraping : si Khamsat change son HTML (XPath, `#load_more_content`, breadcrumb), les scripts casseront silencieusement
+4. **Important** : ces workflows `.github/workflows/` ne s'exécuteront **pas sur GitLab**. GitLab utilise un fichier `.gitlab-ci.yml`. Si vous voulez faire tourner ce pipeline sur GitLab CI/CD, je peux vous le convertir.
+
+Voulez-vous que je convertisse ce pipeline en `.gitlab-ci.yml` pour l'exécuter directement sur GitLab ?
