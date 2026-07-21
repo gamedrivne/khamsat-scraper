@@ -4,14 +4,18 @@ on:
   schedule:
     - cron: '0 22 * * 0'
   workflow_dispatch:
+  repository_dispatch:
+    types: [continue-details-scraping]
 
 jobs:
 
   # ==========================================
   # JOB 1 — RAC1 : Catégories principales
+  # SAUTE si c'est une relance automatique
   # ==========================================
   job1-categories:
     runs-on: ubuntu-latest
+    if: github.event_name != 'repository_dispatch'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -45,10 +49,12 @@ jobs:
 
   # ==========================================
   # JOB 2 — RAC2 : Sous-catégories
+  # SAUTE si c'est une relance automatique
   # ==========================================
   job2-sous-categories:
     runs-on: ubuntu-latest
     needs: job1-categories
+    if: github.event_name != 'repository_dispatch'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -82,10 +88,12 @@ jobs:
 
   # ==========================================
   # JOB 3 — RAC3 : Services
+  # SAUTE si c'est une relance automatique
   # ==========================================
   job3-services:
     runs-on: ubuntu-latest
     needs: job2-sous-categories
+    if: github.event_name != 'repository_dispatch'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -127,21 +135,30 @@ jobs:
 
   # ==========================================
   # JOB 4 — RAC4 : Détails
+  # TOUJOURS exécuté (cycle normal + relance)
   # ==========================================
   job4-details:
     runs-on: ubuntu-latest
-    needs: job3-services
+    needs: [job1-categories, job2-sous-categories, job3-services]
+    if: always()
     timeout-minutes: 350
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: 🗑️ Reset progression (nouveau cycle hebdomadaire)
+    - name: 🗑️ Reset progression (nouveau cycle uniquement)
+      if: github.event_name != 'repository_dispatch'
       run: |
-        echo "🗑️ Nettoyage progression_details..."
+        echo "🗑️ Nettoyage progression_details (nouveau cycle)..."
         rm -rf categories/progress_details/
         mkdir -p categories/progress_details/
-        echo "✅ Progression remise à zéro pour nouveau cycle"
+        echo "✅ Progression remise à zéro"
+
+    - name: 🔄 Reprise progression (relance automatique)
+      if: github.event_name == 'repository_dispatch'
+      run: |
+        echo "🔄 Relance détectée - reprise depuis la progression existante..."
+        mkdir -p categories/progress_details/
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -178,7 +195,7 @@ jobs:
           git pull --rebase origin main
           git stash pop
           git add categories/
-          git commit -m "✅ [4/4] Details - $(date +'%Y-%m-%d %H:%M:%S')"
+          git commit -m "🔄 [4/4] Details - $(date +'%Y-%m-%d %H:%M:%S')"
           git push
         )
 
@@ -189,15 +206,15 @@ jobs:
         python << 'EOF'
         import os, json, glob
 
-        progress_dir = "categories/progress_details"
+        progress_dir  = "categories/progress_details"
         resultats_dir = "categories/resultats"
 
         csv_files = glob.glob(os.path.join(resultats_dir, "Resultats_*.csv"))
-        total_services = 0
+        total_services     = 0
         processed_services = 0
 
         for csv_file in csv_files:
-            filename = os.path.splitext(os.path.basename(csv_file))[0]
+            filename      = os.path.splitext(os.path.basename(csv_file))[0]
             progress_file = os.path.join(progress_dir, f"progress_{filename}.json")
 
             with open(csv_file, 'r', encoding='utf-8-sig') as f:
@@ -227,3 +244,11 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/dispatches \
           -d '{"event_type":"continue-details-scraping"}'
+
+    - name: ✅ Rapport final
+      if: steps.check_complete.outputs.complete == 'true'
+      run: |
+        echo "=========================================="
+        echo "✅ PIPELINE COMPLET - CYCLE TERMINÉ"
+        echo "Prochain cycle : Dimanche 22h00 UTC"
+        echo "=========================================="
