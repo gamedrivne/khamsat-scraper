@@ -1,9 +1,7 @@
 RAPPORT - Resultats_أعمال
 ============================================================
-Total traités : 343
-Succès        : 343
+Total traités : 0
+Succès        : 0
 Erreurs       : 0
 
 DÉTAILS PAR CATÉGORIE :
-- Inconnu > Inconnu : 10
-- تصميم > تصاميم مهنية : 333
