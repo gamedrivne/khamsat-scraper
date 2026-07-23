@@ -1,0 +1,35 @@
+name: Dashboard Update
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Toutes les 30 minutes
+  workflow_dispatch:
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Generate dashboard
+      run: python dashboard.py
+
+    - name: Commit and push dashboard
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add DASHBOARD.md
+        git diff --quiet && git diff --staged --quiet || (
+          git stash
+          git pull --rebase origin main
+          git stash pop
+          git add DASHBOARD.md
+          git commit -m "📊 Dashboard update - $(date +'%Y-%m-%d %H:%M:%S')"
+          git push
+        )
