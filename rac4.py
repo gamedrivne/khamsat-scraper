@@ -15,10 +15,10 @@ from selenium.webdriver.chrome.options import Options
 # 1️⃣ CONFIGURATION POUR GITHUB ACTIONS
 # ============================
 
-base_dir = os.path.join(os.getcwd(), "categories")
+base_dir      = os.path.join(os.getcwd(), "categories")
 resultats_dir = os.path.join(base_dir, "resultats")
-details_dir = os.path.join(base_dir, "details_services")
-progress_dir = os.path.join(base_dir, "progress_details")
+details_dir   = os.path.join(base_dir, "details_services")
+progress_dir  = os.path.join(base_dir, "progress_details")
 
 # Création des dossiers
 for directory in [details_dir, progress_dir]:
@@ -52,17 +52,6 @@ def log_print(msg, level="info"):
 log_print("=" * 60)
 log_print("🚀 DÉMARRAGE EXTRACTION DÉTAILS SERVICES KHAMSAT")
 log_print("=" * 60)
-
-# ============================
-# 🗑️ RESET DES FICHIERS DU CYCLE PRÉCÉDENT
-# ============================
-log_print("🗑️ Nettoyage des anciens fichiers Details_ et Stats_...")
-old_files = glob.glob(os.path.join(details_dir, "Details_*.csv")) + \
-            glob.glob(os.path.join(details_dir, "Stats_*.txt"))
-for old_f in old_files:
-    os.remove(old_f)
-    log_print(f"   -> Supprimé : {os.path.basename(old_f)}")
-log_print("✅ Dossier details_services nettoyé pour nouveau cycle")
 
 # ============================
 # 2️⃣ RÉCUPÉRATION DES FICHIERS RÉSULTATS
@@ -119,7 +108,7 @@ def extract_service_details(driver, wait, link):
     """Extrait tous les détails d'un service."""
     try:
         driver.get(link)
-        time.sleep(2)
+        time.sleep(1)  # ⚡ Réduit de 2s à 1s
 
         # Extraction des données
         title  = get_text(driver, wait, '//h1')
@@ -204,8 +193,8 @@ def process_result_file(result_file, driver, wait):
 
     # Statistiques
     stats_categories = defaultdict(int)
-    total_success = 0
-    total_errors  = 0
+    total_success    = 0
+    total_errors     = 0
 
     # Traitement de chaque service
     for i, link in enumerate(services, 1):
@@ -235,8 +224,8 @@ def process_result_file(result_file, driver, wait):
         processed_links.add(link)
         save_progress(base_name, processed_links)
 
-        # Pause anti-ban
-        time.sleep(2)
+        # ⚡ Pause anti-ban réduite
+        time.sleep(0.5)
 
     # Sauvegarde des statistiques
     with open(stats_file, "w", encoding="utf-8") as f:
@@ -256,7 +245,7 @@ def process_result_file(result_file, driver, wait):
 # 7️⃣ BOUCLE PRINCIPALE
 # ============================
 
-driver     = None
+driver      = None
 grand_total = 0
 
 try:
