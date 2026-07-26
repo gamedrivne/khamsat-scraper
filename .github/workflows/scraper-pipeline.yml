@@ -1,8 +1,8 @@
-name: Khamsat Full Pipeline (Weekly)
+name: Khamsat Full Pipeline (Monthly)
 
 on:
   schedule:
-    - cron: '0 22 * * 0'
+    - cron: '0 22 15 * *'  # Chaque 15 du mois à 22h00 UTC
   workflow_dispatch:
   repository_dispatch:
     types: [continue-details-scraping]
@@ -146,19 +146,22 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: 🗑️ Reset progression (nouveau cycle uniquement)
+    - name: 🗑️ Reset complet (nouveau cycle uniquement)
       if: github.event_name != 'repository_dispatch'
       run: |
-        echo "🗑️ Nettoyage progression_details (nouveau cycle)..."
+        echo "🗑️ Reset complet nouveau cycle..."
         rm -rf categories/progress_details/
+        rm -rf categories/details_services/
         mkdir -p categories/progress_details/
-        echo "✅ Progression remise à zéro"
+        mkdir -p categories/details_services/
+        echo "✅ Reset complet effectué - CSV + progression vidés"
 
     - name: 🔄 Reprise progression (relance automatique)
       if: github.event_name == 'repository_dispatch'
       run: |
         echo "🔄 Relance détectée - reprise depuis la progression existante..."
         mkdir -p categories/progress_details/
+        mkdir -p categories/details_services/
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -250,5 +253,15 @@ jobs:
       run: |
         echo "=========================================="
         echo "✅ PIPELINE COMPLET - CYCLE TERMINÉ"
-        echo "Prochain cycle : Dimanche 22h00 UTC"
+        echo "Prochain cycle : 15 du mois suivant à 22h UTC"
         echo "=========================================="
+
+    - name: 🔔 Trigger Dashboard final
+      if: steps.check_complete.outputs.complete == 'true'
+      run: |
+        echo "📊 Déclenchement dashboard final..."
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"update-dashboard"}'
