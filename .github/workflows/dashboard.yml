@@ -1,8 +1,16 @@
 name: Dashboard Update
 
 on:
-  schedule:
-    - cron: '*/30 * * * *'  # Toutes les 30 minutes
+  # Déclenché par le pipeline principal (en cours + terminé)
+  workflow_run:
+    workflows: ["Khamsat Full Pipeline (Monthly)"]
+    types: [in_progress, completed]
+
+  # Déclenché par les relances automatiques rac4
+  repository_dispatch:
+    types: [continue-details-scraping, update-dashboard]
+
+  # Lancement manuel possible
   workflow_dispatch:
 
 jobs:
