@@ -1,9 +1,7 @@
 RAPPORT - Resultats_بيانات
 ============================================================
-Total traités : 63
-Succès        : 63
+Total traités : 0
+Succès        : 0
 Erreurs       : 0
 
 DÉTAILS PAR CATÉGORIE :
-- Inconnu > Inconnu : 3
-- تسويق رقمي > أساليب التسويق : 60
