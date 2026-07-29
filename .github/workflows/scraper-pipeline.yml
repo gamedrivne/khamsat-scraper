@@ -37,13 +37,10 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add categories/
+        git add -A categories/
         git diff --quiet && git diff --staged --quiet || (
-          git stash
-          git pull --rebase origin main
-          git stash pop
-          git add categories/
           git commit -m "✅ [1/4] Categories - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
           git push
         )
 
@@ -76,13 +73,10 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add categories/
+        git add -A categories/
         git diff --quiet && git diff --staged --quiet || (
-          git stash
-          git pull --rebase origin main
-          git stash pop
-          git add categories/
           git commit -m "✅ [2/4] Sous-categories - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
           git push
         )
 
@@ -123,13 +117,10 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add categories/
+        git add -A categories/
         git diff --quiet && git diff --staged --quiet || (
-          git stash
-          git pull --rebase origin main
-          git stash pop
-          git add categories/
           git commit -m "✅ [3/4] Services - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
           git push
         )
 
@@ -154,7 +145,15 @@ jobs:
         rm -rf categories/details_services/
         mkdir -p categories/progress_details/
         mkdir -p categories/details_services/
-        echo "✅ Reset complet effectué - CSV + progression vidés"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A categories/
+        git diff --quiet && git diff --staged --quiet || (
+          git commit -m "🗑️ Reset nouveau cycle - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
+          git push
+        )
+        echo "✅ Reset complet effectué et commité"
 
     - name: 🔄 Reprise progression (relance automatique)
       if: github.event_name == 'repository_dispatch'
@@ -192,13 +191,10 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add categories/
+        git add -A categories/
         git diff --quiet && git diff --staged --quiet || (
-          git stash
-          git pull --rebase origin main
-          git stash pop
-          git add categories/
           git commit -m "🔄 [4/4] Details - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
           git push
         )
 
