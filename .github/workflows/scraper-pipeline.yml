@@ -44,6 +44,14 @@ jobs:
           git push
         )
 
+    - name: 📊 Trigger Dashboard
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"trigger-dashboard"}'
+
   # ==========================================
   # JOB 2 — RAC2 : Sous-catégories
   # SAUTE si c'est une relance automatique
@@ -79,6 +87,14 @@ jobs:
           git pull origin main --rebase --autostash
           git push
         )
+
+    - name: 📊 Trigger Dashboard
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"trigger-dashboard"}'
 
   # ==========================================
   # JOB 3 — RAC3 : Services
@@ -123,6 +139,14 @@ jobs:
           git pull origin main --rebase --autostash
           git push
         )
+
+    - name: 📊 Trigger Dashboard
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"trigger-dashboard"}'
 
   # ==========================================
   # JOB 4 — RAC4 : Détails
@@ -234,6 +258,15 @@ jobs:
                 f.write("complete=false\n")
         EOF
 
+    - name: 📊 Trigger Dashboard (progression)
+      if: always()
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"trigger-dashboard"}'
+
     - name: Trigger next run if incomplete
       if: steps.check_complete.outputs.complete == 'false'
       run: |
@@ -255,7 +288,6 @@ jobs:
     - name: 🔔 Trigger Dashboard final
       if: steps.check_complete.outputs.complete == 'true'
       run: |
-        echo "📊 Déclenchement dashboard final..."
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
