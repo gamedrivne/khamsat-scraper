@@ -1,16 +1,8 @@
 name: Dashboard Update
 
 on:
-  # Déclenché par le pipeline principal (en cours + terminé)
-  workflow_run:
-    workflows: ["Khamsat Full Pipeline (Monthly)"]
-    types: [in_progress, completed]
-
-  # Déclenché par les relances automatiques rac4
   repository_dispatch:
-    types: [continue-details-scraping, update-dashboard]
-
-  # Lancement manuel possible
+    types: [continue-details-scraping, update-dashboard, trigger-dashboard]
   workflow_dispatch:
 
 jobs:
@@ -34,10 +26,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add DASHBOARD.md
         git diff --quiet && git diff --staged --quiet || (
-          git stash
-          git pull --rebase origin main
-          git stash pop
-          git add DASHBOARD.md
           git commit -m "📊 Dashboard update - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
           git push
         )
