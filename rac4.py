@@ -5,7 +5,6 @@ import json
 import glob
 import logging
 import threading
-from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -22,19 +21,14 @@ resultats_dir = os.path.join(base_dir, "resultats")
 details_dir   = os.path.join(base_dir, "details_services")
 progress_dir  = os.path.join(base_dir, "progress_details")
 
-# Nombre de workers parallèles
-NB_WORKERS = 4
-
-# Verrou pour écriture CSV thread-safe
+NB_WORKERS    = 4
 csv_lock      = threading.Lock()
 progress_lock = threading.Lock()
 
-# Création des dossiers
 for directory in [details_dir, progress_dir]:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-# Log principal
 log_file = os.path.join(base_dir, "journal_details_services.log")
 
 logging.basicConfig(
@@ -48,7 +42,7 @@ logging.basicConfig(
 )
 
 def log_print(msg, level="info"):
-    if level == "info":    logging.info(msg)
+    if level == "info":      logging.info(msg)
     elif level == "warning": logging.warning(msg)
     elif level == "error":   logging.error(msg)
     elif level == "success": logging.info(f"✅ {msg}")
@@ -161,11 +155,9 @@ def extract_service_details(driver, wait, link):
 # ============================
 
 def worker_process(worker_id, links_chunk, output_csv, base_name, processed_links_shared):
-    """Un worker traite son chunk de liens."""
-
     log_print(f"🔧 Worker {worker_id} démarré → {len(links_chunk)} services")
 
-    driver = None
+    driver        = None
     local_success = 0
     local_errors  = 0
 
@@ -175,14 +167,12 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
 
         for i, link in enumerate(links_chunk, 1):
 
-            # Vérifier si déjà traité (par un autre worker)
             with progress_lock:
                 if link in processed_links_shared:
                     continue
 
             result = extract_service_details(driver, wait, link)
 
-            # Écriture thread-safe dans le CSV
             with csv_lock:
                 with open(output_csv, "a", newline="", encoding="utf-8-sig") as f:
                     writer = csv.writer(f)
@@ -192,11 +182,9 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
                         result["cat_sub"], result["keywords"], result["link"]
                     ])
 
-            # Mise à jour progression thread-safe
             with progress_lock:
                 processed_links_shared.add(link)
 
-            # Sauvegarde progression toutes les 50 URLs
             if i % 50 == 0:
                 save_progress(base_name, processed_links_shared)
                 log_print(f"   Worker {worker_id} → {i}/{len(links_chunk)} traités")
@@ -206,7 +194,7 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
             else:
                 local_errors += 1
 
-            time.sleep(0.3)  # ⚡ Pause minimale anti-ban
+            time.sleep(0.3)
 
     except Exception as e:
         log_print(f"❌ Worker {worker_id} erreur critique : {e}", "error")
@@ -223,8 +211,6 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
 # ============================
 
 def process_result_file(result_file):
-    """Traite un fichier avec NB_WORKERS workers parallèles."""
-
     base_name  = os.path.splitext(os.path.basename(result_file))[0]
     output_csv = os.path.join(details_dir, f"Details_{base_name}.csv")
     stats_file = os.path.join(details_dir, f"Stats_{base_name}.txt")
@@ -233,12 +219,10 @@ def process_result_file(result_file):
     log_print(f"📁 Traitement : {base_name}")
     log_print(f"{'='*60}")
 
-    # Chargement progression
     processed_links = load_progress(base_name)
     if processed_links:
         log_print(f"🔄 Reprise : {len(processed_links)} services déjà traités")
 
-    # Initialisation CSV si nouveau
     if not os.path.exists(output_csv):
         with open(output_csv, "w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
@@ -246,7 +230,6 @@ def process_result_file(result_file):
                              "Date Dernier Avis", "Catégorie",
                              "Sous-Catégorie", "Mots Clés", "Lien"])
 
-    # Lecture des services à traiter
     services = []
     try:
         with open(result_file, "r", encoding="utf-8-sig") as f:
@@ -266,7 +249,6 @@ def process_result_file(result_file):
         log_print(f"✅ Déjà complet !")
         return 0
 
-    # Diviser en chunks pour chaque worker
     chunk_size = max(1, total_services // NB_WORKERS)
     chunks = []
     for i in range(NB_WORKERS):
@@ -278,7 +260,6 @@ def process_result_file(result_file):
 
     log_print(f"📦 Division : {[len(c) for c in chunks]} services par worker")
 
-    # Lancement des workers en parallèle
     total_success = 0
     total_errors  = 0
 
@@ -303,10 +284,8 @@ def process_result_file(result_file):
             except Exception as e:
                 log_print(f"❌ Erreur future : {e}", "error")
 
-    # Sauvegarde finale de la progression
     save_progress(base_name, processed_links)
 
-    # Sauvegarde statistiques
     with open(stats_file, "w", encoding="utf-8") as f:
         f.write(f"RAPPORT - {base_name}\n")
         f.write("=" * 60 + "\n")
