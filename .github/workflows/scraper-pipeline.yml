@@ -2,8 +2,17 @@ name: Khamsat Full Pipeline (Monthly)
 
 on:
   schedule:
-    - cron: '0 22 15 * *'  # Chaque 15 du mois à 22h00 UTC
+    - cron: '0 22 15 * *'
   workflow_dispatch:
+    inputs:
+      reset:
+        description: 'Reset complet ? (oui = nouveau cycle, non = continuer)'
+        required: true
+        default: 'non'
+        type: choice
+        options:
+          - 'non'
+          - 'oui'
   repository_dispatch:
     types: [continue-details-scraping]
 
@@ -11,7 +20,6 @@ jobs:
 
   # ==========================================
   # JOB 1 — RAC1 : Catégories principales
-  # SAUTE si c'est une relance automatique
   # ==========================================
   job1-categories:
     runs-on: ubuntu-latest
@@ -54,7 +62,6 @@ jobs:
 
   # ==========================================
   # JOB 2 — RAC2 : Sous-catégories
-  # SAUTE si c'est une relance automatique
   # ==========================================
   job2-sous-categories:
     runs-on: ubuntu-latest
@@ -98,7 +105,6 @@ jobs:
 
   # ==========================================
   # JOB 3 — RAC3 : Services
-  # SAUTE si c'est une relance automatique
   # ==========================================
   job3-services:
     runs-on: ubuntu-latest
@@ -150,7 +156,6 @@ jobs:
 
   # ==========================================
   # JOB 4 — RAC4 : Détails
-  # TOUJOURS exécuté (cycle normal + relance)
   # ==========================================
   job4-details:
     runs-on: ubuntu-latest
@@ -161,10 +166,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: 🗑️ Reset complet (nouveau cycle uniquement)
-      if: github.event_name != 'repository_dispatch'
+    - name: 🗑️ Reset complet (nouveau cycle schedule)
+      if: github.event_name == 'schedule'
       run: |
-        echo "🗑️ Reset complet nouveau cycle..."
+        echo "🗑️ Reset automatique cycle mensuel..."
         rm -rf categories/progress_details/
         rm -rf categories/details_services/
         mkdir -p categories/progress_details/
@@ -177,12 +182,32 @@ jobs:
           git pull origin main --rebase --autostash
           git push
         )
-        echo "✅ Reset complet effectué et commité"
+        echo "✅ Reset complet effectué"
 
-    - name: 🔄 Reprise progression (relance automatique)
-      if: github.event_name == 'repository_dispatch'
+    - name: 🗑️ Reset complet (manuel avec oui)
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.reset == 'oui'
       run: |
-        echo "🔄 Relance détectée - reprise depuis la progression existante..."
+        echo "🗑️ Reset manuel demandé..."
+        rm -rf categories/progress_details/
+        rm -rf categories/details_services/
+        mkdir -p categories/progress_details/
+        mkdir -p categories/details_services/
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A categories/
+        git diff --quiet && git diff --staged --quiet || (
+          git commit -m "🗑️ Reset manuel - $(date +'%Y-%m-%d %H:%M:%S')"
+          git pull origin main --rebase --autostash
+          git push
+        )
+        echo "✅ Reset manuel effectué"
+
+    - name: 🔄 Reprise (manuel non ou relance auto)
+      if: |
+        github.event_name == 'repository_dispatch' ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.reset == 'non')
+      run: |
+        echo "🔄 Reprise depuis la progression existante..."
         mkdir -p categories/progress_details/
         mkdir -p categories/details_services/
 
@@ -258,7 +283,7 @@ jobs:
                 f.write("complete=false\n")
         EOF
 
-    - name: 📊 Trigger Dashboard (progression)
+    - name: 📊 Trigger Dashboard
       if: always()
       run: |
         curl -X POST \
@@ -270,7 +295,6 @@ jobs:
     - name: Trigger next run if incomplete
       if: steps.check_complete.outputs.complete == 'false'
       run: |
-        echo "🔄 Relance automatique rac4..."
         curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
