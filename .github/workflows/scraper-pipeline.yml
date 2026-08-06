@@ -37,8 +37,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install supabase
 
     - name: Run rac1.py
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: python rac1.py
 
     - name: Commit and push results
@@ -80,8 +84,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install supabase
 
     - name: Run rac2.py
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: python rac2.py
 
     - name: Commit and push results
@@ -131,8 +139,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install supabase
 
     - name: Run rac3.py
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: python rac3.py
 
     - name: Commit and push results
@@ -228,10 +240,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install supabase
 
     - name: Run rac4.py
       id: scraping
       timeout-minutes: 340
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        CYCLE_NUMBER: ${{ github.run_number }}
       run: python rac4.py
       continue-on-error: true
 
