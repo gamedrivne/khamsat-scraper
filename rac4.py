@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+import db_writer
 
 # ============================
 # 1️⃣ CONFIGURATION
@@ -24,6 +25,9 @@ progress_dir  = os.path.join(base_dir, "progress_details")
 NB_WORKERS    = 4
 csv_lock      = threading.Lock()
 progress_lock = threading.Lock()
+db_lock       = threading.Lock()
+
+CYCLE_NUMBER  = int(os.environ.get("CYCLE_NUMBER", 1))
 
 for directory in [details_dir, progress_dir]:
     if not os.path.exists(directory):
@@ -160,6 +164,7 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
     driver        = None
     local_success = 0
     local_errors  = 0
+    db_batch      = []
 
     try:
         driver = init_driver(worker_id)
@@ -185,8 +190,25 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
             with progress_lock:
                 processed_links_shared.add(link)
 
+            # Accumule pour la DB
+            db_batch.append({
+                "Titre":            result["title"],
+                "Vendeur":          result["owner"],
+                "Acheteurs":        result["buyers"],
+                "Notes":            result["votes"],
+                "Date Dernier Avis": result["last_date"],
+                "Catégorie":        result["cat_main"],
+                "Sous-Catégorie":   result["cat_sub"],
+                "Mots Clés":        result["keywords"],
+                "Lien":             result["link"],
+            })
+
             if i % 50 == 0:
                 save_progress(base_name, processed_links_shared)
+                # Envoi batch DB
+                with db_lock:
+                    db_writer.upsert_service_details(db_batch, cycle_number=CYCLE_NUMBER)
+                db_batch = []
                 log_print(f"   Worker {worker_id} → {i}/{len(links_chunk)} traités")
 
             if result["status"] == "success":
@@ -195,6 +217,11 @@ def worker_process(worker_id, links_chunk, output_csv, base_name, processed_link
                 local_errors += 1
 
             time.sleep(0.3)
+
+        # Envoi du reste du batch
+        if db_batch:
+            with db_lock:
+                db_writer.upsert_service_details(db_batch, cycle_number=CYCLE_NUMBER)
 
     except Exception as e:
         log_print(f"❌ Worker {worker_id} erreur critique : {e}", "error")
@@ -260,6 +287,9 @@ def process_result_file(result_file):
 
     log_print(f"📦 Division : {[len(c) for c in chunks]} services par worker")
 
+    # Log démarrage pipeline
+    run_id = db_writer.log_pipeline_start("rac4", cycle_number=CYCLE_NUMBER)
+
     total_success = 0
     total_errors  = 0
 
@@ -285,6 +315,9 @@ def process_result_file(result_file):
                 log_print(f"❌ Erreur future : {e}", "error")
 
     save_progress(base_name, processed_links)
+
+    # Log fin pipeline
+    db_writer.log_pipeline_end(run_id, total_success)
 
     with open(stats_file, "w", encoding="utf-8") as f:
         f.write(f"RAPPORT - {base_name}\n")
