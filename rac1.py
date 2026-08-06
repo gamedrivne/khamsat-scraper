@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 import os
 import logging
+import db_writer
 
 # ==========================================
 # 1. CONFIGURATION
@@ -26,7 +27,7 @@ logging.basicConfig(
 
 def log_print(msg, level="info"):
     print(msg)
-    if level == "info":    logging.info(msg)
+    if level == "info":      logging.info(msg)
     elif level == "warning": logging.warning(msg)
     elif level == "error":   logging.error(msg)
 
@@ -58,16 +59,15 @@ except Exception as e:
 
 soup = BeautifulSoup(response.content, 'html.parser')
 
-# Cibler le conteneur de la grille
 grid = soup.select_one("div.row.grid-items")
 
 if not grid:
     log_print("ERREUR : Conteneur 'div.row.grid-items' non trouvé !", "error")
     exit()
 
-# Extraire tous les liens <a> dans ce conteneur
-categories = []
-seen = set()
+categories    = []
+db_categories = []
+seen          = set()
 
 for a_tag in grid.select("a[href]"):
     href = a_tag.get("href", "").strip()
@@ -76,7 +76,10 @@ for a_tag in grid.select("a[href]"):
 
     if href and name and href not in seen:
         full_url = "https://khamsat.com" + href
+        slug     = href.strip("/").split("/")[-1]
+
         categories.append([name, full_url])
+        db_categories.append({"name": name, "slug": slug})
         seen.add(href)
         log_print(f"   -> Trouvé : {name} | {full_url}")
 
@@ -94,5 +97,15 @@ if categories:
     log_print(f"✅ {len(categories)} catégories sauvegardées dans : {output_file}")
 else:
     log_print("ATTENTION : Aucune catégorie extraite !", "warning")
+
+# ==========================================
+# 5. SAUVEGARDE DB
+# ==========================================
+
+if db_categories:
+    run_id = db_writer.log_pipeline_start("rac1")
+    db_writer.upsert_categories(db_categories)
+    db_writer.log_pipeline_end(run_id, len(db_categories))
+    log_print(f"✅ {len(db_categories)} catégories envoyées à Supabase.")
 
 log_print("=== FIN DU TRAITEMENT ===")
