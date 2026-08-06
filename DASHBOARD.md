@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-08-05 22:52 UTC**
+> 🕐 Dernière mise à jour : **2026-08-06 04:33 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **37291/69852** (53.4%) | 🔄 EN COURS |
+| Job4 | Détails services | **41557/69852** (59.5%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[██████████░░░░░░░░░░] 53.4%
-Traités  : 37291 services
-Restants : 32561 services
-Temps est: ~18h 05min
+[███████████░░░░░░░░░] 59.5%
+Traités  : 41557 services
+Restants : 28295 services
+Temps est: ~15h 43min
 ```
 
 ---
@@ -31,15 +31,15 @@ Temps est: ~18h 05min
 | Catégorie | Services | Traités | Progression | Status |
 |-----------|----------|---------|-------------|--------|
 | أسلوب_حياة | 612 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| أعمال | 5258 | 4261 | `████████░░` 81% | 🔄 |
+| أعمال | 5258 | 4365 | `████████░░` 83% | 🔄 |
 | برمجة_وتطوير | 12947 | 11702 | `█████████░` 90% | 🔄 |
 | بيانات | 4922 | 4618 | `█████████░` 94% | 🔄 |
 | تسويق_رقمي | 5877 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | تصميم | 16828 | 15650 | `█████████░` 93% | 🔄 |
-| تعليم_عن_بعد | 1428 | 0 | `░░░░░░░░░░` 0% | ⏳ |
+| تعليم_عن_بعد | 1428 | 1082 | `███████░░░` 76% | 🔄 |
 | ذكاء_اصطناعي_وتعلم_الآلة | 1092 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | صوتيات | 1836 | 1060 | `█████░░░░░` 58% | 🔄 |
-| فيديو_وأنيميشن | 3163 | 0 | `░░░░░░░░░░` 0% | ⏳ |
+| فيديو_وأنيميشن | 3163 | 3080 | `█████████░` 97% | 🔄 |
 | كتابة_وترجمة | 12735 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | هندسة_وعمارة | 3154 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 
@@ -47,8 +47,8 @@ Temps est: ~18h 05min
 
 ## 📊 STATISTIQUES FINALES
 
-- 📁 Fichiers de détails générés : **5**
-- 📝 Total lignes extraites       : **39304**
+- 📁 Fichiers de détails générés : **7**
+- 📝 Total lignes extraites       : **43649**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
