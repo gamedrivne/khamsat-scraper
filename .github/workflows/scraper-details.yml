@@ -2,8 +2,6 @@ name: Khamsat Details Scraper (Manual Debug)
 
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [continue-details-scraping]
 
 jobs:
   scrape-details:
