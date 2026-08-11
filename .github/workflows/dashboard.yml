@@ -2,7 +2,7 @@ name: Dashboard Update
 
 on:
   repository_dispatch:
-    types: [continue-details-scraping, update-dashboard, trigger-dashboard]
+    types: [update-dashboard, trigger-dashboard]
   workflow_dispatch:
 
 jobs:
