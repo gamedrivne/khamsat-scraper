@@ -20,7 +20,7 @@
 
 | Fichier | Nom | Déclencheur | Rôle |
 |---------|-----|-------------|------|
-| `dashboard.yml` | Dashboard Update | Automatique après chaque job + manuel | Met à jour `DASHBOARD.md` avec la progression en temps réel |
+| `dashboard.yml` | Dashboard Update | Automatique après chaque job + manuel | `dashboard.yml` écoute : `continue-details-scraping, update-dashboard, trigger-dashboard` |
 
 ---
 
