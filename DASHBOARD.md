@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-08-12 12:51 UTC**
+> 🕐 Dernière mise à jour : **2026-08-12 18:32 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **30942/69852** (44.3%) | 🔄 EN COURS |
+| Job4 | Détails services | **34995/69852** (50.1%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[████████░░░░░░░░░░░░] 44.3%
-Traités  : 30942 services
-Restants : 38910 services
-Temps est: ~21h 37min
+[██████████░░░░░░░░░░] 50.1%
+Traités  : 34995 services
+Restants : 34857 services
+Temps est: ~19h 21min
 ```
 
 ---
@@ -32,7 +32,7 @@ Temps est: ~21h 37min
 |-----------|----------|---------|-------------|--------|
 | أسلوب_حياة | 612 | 589 | `█████████░` 96% | 🔄 |
 | أعمال | 5258 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| برمجة_وتطوير | 12947 | 7388 | `█████░░░░░` 57% | 🔄 |
+| برمجة_وتطوير | 12947 | 11441 | `████████░░` 88% | 🔄 |
 | بيانات | 4922 | 4618 | `█████████░` 94% | 🔄 |
 | تسويق_رقمي | 5877 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | تصميم | 16828 | 15650 | `█████████░` 93% | 🔄 |
@@ -48,7 +48,7 @@ Temps est: ~21h 37min
 ## 📊 STATISTIQUES FINALES
 
 - 📁 Fichiers de détails générés : **12**
-- 📝 Total lignes extraites       : **93008**
+- 📝 Total lignes extraites       : **97097**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
