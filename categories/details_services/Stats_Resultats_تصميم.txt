@@ -1,7 +1,6 @@
 RAPPORT - Resultats_تصميم
 ============================================================
-Total traités : 0
-Succès        : 0
+Total traités : 3496
+Succès        : 3353
 Erreurs       : 0
-
-DÉTAILS PAR CATÉGORIE :
+Workers       : 4
