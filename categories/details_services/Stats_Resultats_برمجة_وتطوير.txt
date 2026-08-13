@@ -1,6 +1,6 @@
 RAPPORT - Resultats_برمجة_وتطوير
 ============================================================
-Total traités : 4165
-Succès        : 4104
+Total traités : 269
+Succès        : 261
 Erreurs       : 0
 Workers       : 4
