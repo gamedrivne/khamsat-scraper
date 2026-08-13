@@ -1,6 +1,6 @@
 RAPPORT - Resultats_ذكاء_اصطناعي_وتعلم_الآلة
 ============================================================
-Total traités : 1092
-Succès        : 1062
+Total traités : 868
+Succès        : 846
 Erreurs       : 0
 Workers       : 4
