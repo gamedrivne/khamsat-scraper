@@ -1,6 +1,6 @@
 RAPPORT - Resultats_كتابة_وترجمة
 ============================================================
-Total traités : 2287
-Succès        : 1957
+Total traités : 1804
+Succès        : 1516
 Erreurs       : 0
 Workers       : 4
