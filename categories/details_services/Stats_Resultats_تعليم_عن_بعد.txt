@@ -1,0 +1,6 @@
+RAPPORT - Resultats_تعليم_عن_بعد
+============================================================
+Total traités : 626
+Succès        : 621
+Erreurs       : 0
+Workers       : 4
