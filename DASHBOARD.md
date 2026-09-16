@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-08-16 02:34 UTC**
+> 🕐 Dernière mise à jour : **2026-09-16 00:00 UTC**
 
 ---
 
