@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-09-18 20:15 UTC**
+> 🕐 Dernière mise à jour : **2026-09-19 01:55 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **9641/69852** (13.8%) | 🔄 EN COURS |
+| Job4 | Détails services | **10425/69852** (14.9%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[██░░░░░░░░░░░░░░░░░░] 13.8%
-Traités  : 9641 services
-Restants : 60211 services
-Temps est: ~33h 27min
+[██░░░░░░░░░░░░░░░░░░] 14.9%
+Traités  : 10425 services
+Restants : 59427 services
+Temps est: ~33h 00min
 ```
 
 ---
@@ -35,7 +35,7 @@ Temps est: ~33h 27min
 | برمجة_وتطوير | 12947 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | بيانات | 4922 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | تسويق_رقمي | 5877 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| تصميم | 16828 | 8220 | `████░░░░░░` 49% | 🔄 |
+| تصميم | 16828 | 9004 | `█████░░░░░` 54% | 🔄 |
 | تعليم_عن_بعد | 1428 | 1421 | `█████████░` 100% | 🔄 |
 | ذكاء_اصطناعي_وتعلم_الآلة | 1092 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | صوتيات | 1836 | 0 | `░░░░░░░░░░` 0% | ⏳ |
@@ -48,7 +48,7 @@ Temps est: ~33h 27min
 ## 📊 STATISTIQUES FINALES
 
 - 📁 Fichiers de détails générés : **2**
-- 📝 Total lignes extraites       : **10505**
+- 📝 Total lignes extraites       : **11381**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
