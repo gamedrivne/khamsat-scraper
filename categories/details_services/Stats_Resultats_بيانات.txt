@@ -1,0 +1,6 @@
+RAPPORT - Resultats_بيانات
+============================================================
+Total traités : 736
+Succès        : 705
+Erreurs       : 0
+Workers       : 4
