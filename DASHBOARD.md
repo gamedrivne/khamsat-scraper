@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-09-22 20:54 UTC**
+> 🕐 Dernière mise à jour : **2026-09-22 20:55 UTC**
 
 ---
 
@@ -47,7 +47,7 @@ Temps est: ~25h 52min
 
 ## 📊 STATISTIQUES FINALES
 
-- 📁 Fichiers de détails générés : **4**
+- 📁 Fichiers de détails générés : **12**
 - 📝 Total lignes extraites       : **25359**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
