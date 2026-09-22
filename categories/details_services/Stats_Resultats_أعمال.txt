@@ -1,0 +1,6 @@
+RAPPORT - Resultats_أعمال
+============================================================
+Total traités : 5258
+Succès        : 0
+Erreurs       : 0
+Workers       : 4
