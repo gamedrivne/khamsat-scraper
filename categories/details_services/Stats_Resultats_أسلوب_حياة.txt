@@ -1,6 +1,6 @@
 RAPPORT - Resultats_أسلوب_حياة
 ============================================================
-Total traités : 612
-Succès        : 0
+Total traités : 408
+Succès        : 390
 Erreurs       : 0
 Workers       : 4
