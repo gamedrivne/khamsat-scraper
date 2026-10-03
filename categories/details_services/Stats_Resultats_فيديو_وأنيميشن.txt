@@ -1,6 +1,6 @@
 RAPPORT - Resultats_فيديو_وأنيميشن
 ============================================================
-Total traités : 1538
-Succès        : 0
+Total traités : 729
+Succès        : 685
 Erreurs       : 0
 Workers       : 4
