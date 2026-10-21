@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-10-21 10:50 UTC**
+> 🕐 Dernière mise à jour : **2026-10-21 16:31 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **18406/69852** (26.3%) | 🔄 EN COURS |
+| Job4 | Détails services | **19063/69852** (27.3%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[█████░░░░░░░░░░░░░░░] 26.3%
-Traités  : 18406 services
-Restants : 51446 services
-Temps est: ~28h 34min
+[█████░░░░░░░░░░░░░░░] 27.3%
+Traités  : 19063 services
+Restants : 50789 services
+Temps est: ~28h 12min
 ```
 
 ---
@@ -41,14 +41,14 @@ Temps est: ~28h 34min
 | صوتيات | 1836 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | فيديو_وأنيميشن | 3163 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | كتابة_وترجمة | 12735 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| هندسة_وعمارة | 3154 | 2386 | `███████░░░` 76% | 🔄 |
+| هندسة_وعمارة | 3154 | 3043 | `█████████░` 96% | 🔄 |
 
 ---
 
 ## 📊 STATISTIQUES FINALES
 
-- 📁 Fichiers de détails générés : **4**
-- 📝 Total lignes extraites       : **20079**
+- 📁 Fichiers de détails générés : **5**
+- 📝 Total lignes extraites       : **20924**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
