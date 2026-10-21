@@ -1,0 +1,6 @@
+RAPPORT - Resultats_هندسة_وعمارة
+============================================================
+Total traités : 683
+Succès        : 657
+Erreurs       : 0
+Workers       : 4
