@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-10-30 22:08 UTC**
+> 🕐 Dernière mise à jour : **2026-10-31 03:49 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **52866/69852** (75.7%) | 🔄 EN COURS |
+| Job4 | Détails services | **55090/69852** (78.9%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[███████████████░░░░░] 75.7%
-Traités  : 52866 services
-Restants : 16986 services
-Temps est: ~9h 26min
+[███████████████░░░░░] 78.9%
+Traités  : 55090 services
+Restants : 14762 services
+Temps est: ~8h 12min
 ```
 
 ---
@@ -40,7 +40,7 @@ Temps est: ~9h 26min
 | ذكاء_اصطناعي_وتعلم_الآلة | 1092 | 1062 | `█████████░` 97% | 🔄 |
 | صوتيات | 1836 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | فيديو_وأنيميشن | 3163 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| كتابة_وترجمة | 12735 | 6498 | `█████░░░░░` 51% | 🔄 |
+| كتابة_وترجمة | 12735 | 8722 | `██████░░░░` 68% | 🔄 |
 | هندسة_وعمارة | 3154 | 3043 | `█████████░` 96% | 🔄 |
 
 ---
@@ -48,7 +48,7 @@ Temps est: ~9h 26min
 ## 📊 STATISTIQUES FINALES
 
 - 📁 Fichiers de détails générés : **10**
-- 📝 Total lignes extraites       : **57075**
+- 📝 Total lignes extraites       : **59367**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
