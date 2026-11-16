@@ -1,0 +1,6 @@
+RAPPORT - Resultats_صوتيات
+============================================================
+Total traités : 1836
+Succès        : 1229
+Erreurs       : 0
+Workers       : 4
