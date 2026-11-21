@@ -1,6 +1,6 @@
 # 📊 DASHBOARD — KHAMSAT SCRAPER
 
-> 🕐 Dernière mise à jour : **2026-11-21 12:23 UTC**
+> 🕐 Dernière mise à jour : **2026-11-21 18:04 UTC**
 
 ---
 
@@ -11,17 +11,17 @@
 | Job1 | Catégories principales | **12** catégories | ✅ |
 | Job2 | Sous-catégories | **330** sous-catégories | ✅ |
 | Job3 | Services | **69852** services | ✅ |
-| Job4 | Détails services | **52888/69852** (75.7%) | 🔄 EN COURS |
+| Job4 | Détails services | **55161/69852** (79.0%) | 🔄 EN COURS |
 
 ---
 
 ## 📈 PROGRESSION JOB4 — Détails services
 
 ```
-[███████████████░░░░░] 75.7%
-Traités  : 52888 services
-Restants : 16964 services
-Temps est: ~9h 25min
+[███████████████░░░░░] 79.0%
+Traités  : 55161 services
+Restants : 14691 services
+Temps est: ~8h 09min
 ```
 
 ---
@@ -32,12 +32,12 @@ Temps est: ~9h 25min
 |-----------|----------|---------|-------------|--------|
 | أسلوب_حياة | 612 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | أعمال | 5258 | 4365 | `████████░░` 83% | 🔄 |
-| برمجة_وتطوير | 12947 | 11459 | `████████░░` 89% | 🔄 |
+| برمجة_وتطوير | 12947 | 11702 | `█████████░` 90% | 🔄 |
 | بيانات | 4922 | 4089 | `████████░░` 83% | 🔄 |
 | تسويق_رقمي | 5877 | 0 | `░░░░░░░░░░` 0% | ⏳ |
 | تصميم | 16828 | 15650 | `█████████░` 93% | 🔄 |
-| تعليم_عن_بعد | 1428 | 0 | `░░░░░░░░░░` 0% | ⏳ |
-| ذكاء_اصطناعي_وتعلم_الآلة | 1092 | 0 | `░░░░░░░░░░` 0% | ⏳ |
+| تعليم_عن_بعد | 1428 | 1421 | `█████████░` 100% | 🔄 |
+| ذكاء_اصطناعي_وتعلم_الآلة | 1092 | 609 | `█████░░░░░` 56% | 🔄 |
 | صوتيات | 1836 | 1060 | `█████░░░░░` 58% | 🔄 |
 | فيديو_وأنيميشن | 3163 | 3080 | `█████████░` 97% | 🔄 |
 | كتابة_وترجمة | 12735 | 10142 | `███████░░░` 80% | 🔄 |
@@ -47,8 +47,8 @@ Temps est: ~9h 25min
 
 ## 📊 STATISTIQUES FINALES
 
-- 📁 Fichiers de détails générés : **8**
-- 📝 Total lignes extraites       : **54170**
+- 📁 Fichiers de détails générés : **10**
+- 📝 Total lignes extraites       : **56543**
 - 🗂️ Catégories traitées          : **12**
 - 📋 Sous-catégories              : **330**
 - 🔗 Services totaux              : **69852**
