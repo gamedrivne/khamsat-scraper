@@ -1,0 +1,6 @@
+RAPPORT - Resultats_تسويق_رقمي
+============================================================
+Total traités : 310
+Succès        : 306
+Erreurs       : 0
+Workers       : 4
